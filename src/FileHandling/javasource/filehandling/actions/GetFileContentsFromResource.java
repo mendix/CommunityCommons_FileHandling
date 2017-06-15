@@ -7,7 +7,7 @@
 // Other code you write will be lost the next time you deploy the project.
 // Special characters, e.g., é, ö, à, etc. are supported in comments.
 
-package coco_filehandling.actions;
+package filehandling.actions;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -17,18 +17,18 @@ import com.mendix.webui.CustomJavaAction;
 import com.mendix.systemwideinterfaces.core.IMendixObject;
 
 /**
- * Reads a file from the local (server) storage and stores it inside a FileDocument.
+ * Set the contents of a FileDocument with the contents of a file which is a resource.
  */
-public class FileDocumentFromFile extends CustomJavaAction<Boolean>
+public class GetFileContentsFromResource extends CustomJavaAction<Boolean>
 {
-	private String file;
+	private String filename;
 	private IMendixObject __fileDocument;
 	private system.proxies.FileDocument fileDocument;
 
-	public FileDocumentFromFile(IContext context, String file, IMendixObject fileDocument)
+	public GetFileContentsFromResource(IContext context, String filename, IMendixObject fileDocument)
 	{
 		super(context);
-		this.file = file;
+		this.filename = filename;
 		this.__fileDocument = fileDocument;
 	}
 
@@ -38,10 +38,13 @@ public class FileDocumentFromFile extends CustomJavaAction<Boolean>
 		this.fileDocument = __fileDocument == null ? null : system.proxies.FileDocument.initialize(getContext(), __fileDocument);
 
 		// BEGIN USER CODE
-		FileInputStream fis = new FileInputStream(new File(this.file));
+		File myFile = new File(Core.getConfiguration().getResourcesPath() + 
+				File.separator + filename);
+
+		FileInputStream fis = new FileInputStream(myFile);
 		Core.storeFileDocumentContent(getContext(), fileDocument.getMendixObject(), 
-				this.file, fis);
-		fis.close();
+				filename, fis);
+		
 		return true;
 		// END USER CODE
 	}
@@ -52,7 +55,7 @@ public class FileDocumentFromFile extends CustomJavaAction<Boolean>
 	@Override
 	public String toString()
 	{
-		return "FileDocumentFromFile";
+		return "GetFileContentsFromResource";
 	}
 
 	// BEGIN EXTRA CODE

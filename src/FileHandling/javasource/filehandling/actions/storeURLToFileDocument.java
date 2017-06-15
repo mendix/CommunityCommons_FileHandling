@@ -7,13 +7,13 @@
 // Other code you write will be lost the next time you deploy the project.
 // Special characters, e.g., é, ö, à, etc. are supported in comments.
 
-package coco_filehandling.actions;
+package filehandling.actions;
 
 import com.mendix.systemwideinterfaces.core.IContext;
 import com.mendix.systemwideinterfaces.core.IMendixObject;
 import com.mendix.webui.CustomJavaAction;
 
-import coco_filehandling.FileHandling;
+import filehandling.FileHandling;
 
 /**
  * Retrieve a document from an URL using a HTTP GET request. 

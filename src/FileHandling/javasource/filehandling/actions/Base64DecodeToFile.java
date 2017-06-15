@@ -7,35 +7,40 @@
 // Other code you write will be lost the next time you deploy the project.
 // Special characters, e.g., é, ö, à, etc. are supported in comments.
 
-package coco_filehandling.actions;
+package filehandling.actions;
 
 import com.mendix.systemwideinterfaces.core.IContext;
 import com.mendix.systemwideinterfaces.core.IMendixObject;
 import com.mendix.webui.CustomJavaAction;
 
-import coco_filehandling.FileHandling;
+import filehandling.FileHandling;
 
 /**
- * Returns the filesize of a file document in bytes.
+ * Stores an base 64 encoded string plain in the provided target file document
+ * 
+ * Note that targetFile will be committed.
  */
-public class getFileSize extends CustomJavaAction<Long>
+public class Base64DecodeToFile extends CustomJavaAction<Boolean>
 {
-	private IMendixObject __document;
-	private system.proxies.FileDocument document;
+	private String encoded;
+	private IMendixObject __targetFile;
+	private system.proxies.FileDocument targetFile;
 
-	public getFileSize(IContext context, IMendixObject document)
+	public Base64DecodeToFile(IContext context, String encoded, IMendixObject targetFile)
 	{
 		super(context);
-		this.__document = document;
+		this.encoded = encoded;
+		this.__targetFile = targetFile;
 	}
 
 	@Override
-	public Long executeAction() throws Exception
+	public Boolean executeAction() throws Exception
 	{
-		this.document = __document == null ? null : system.proxies.FileDocument.initialize(getContext(), __document);
+		this.targetFile = __targetFile == null ? null : system.proxies.FileDocument.initialize(getContext(), __targetFile);
 
 		// BEGIN USER CODE
-		return FileHandling.getFileSize(this.getContext(), document.getMendixObject());
+		FileHandling.base64DecodeToFile(getContext(), encoded, targetFile);
+		return true;
 		// END USER CODE
 	}
 
@@ -45,7 +50,7 @@ public class getFileSize extends CustomJavaAction<Long>
 	@Override
 	public String toString()
 	{
-		return "getFileSize";
+		return "Base64DecodeToFile";
 	}
 
 	// BEGIN EXTRA CODE

@@ -7,7 +7,7 @@
 // Other code you write will be lost the next time you deploy the project.
 // Special characters, e.g., é, ö, à, etc. are supported in comments.
 
-package coco_filehandling.actions;
+package filehandling.actions;
 
 import java.io.File;
 import java.io.FileOutputStream;

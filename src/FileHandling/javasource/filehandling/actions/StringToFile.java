@@ -7,38 +7,39 @@
 // Other code you write will be lost the next time you deploy the project.
 // Special characters, e.g., é, ö, à, etc. are supported in comments.
 
-package coco_filehandling.actions;
+package filehandling.actions;
 
 import com.mendix.systemwideinterfaces.core.IContext;
 import com.mendix.systemwideinterfaces.core.IMendixObject;
 import com.mendix.webui.CustomJavaAction;
-import coco_filehandling.FileHandling;
+
+import filehandling.FileHandling;
 
 /**
- * Stores an base 64 encoded string plain in the provided target file document
+ * Stores a string into the provided filedocument
  * 
- * Note that targetFile will be committed.
+ * Note that destination will be committed.
  */
-public class Base64DecodeToFile extends CustomJavaAction<Boolean>
+public class StringToFile extends CustomJavaAction<Boolean>
 {
-	private String encoded;
-	private IMendixObject __targetFile;
-	private system.proxies.FileDocument targetFile;
+	private String value;
+	private IMendixObject __destination;
+	private system.proxies.FileDocument destination;
 
-	public Base64DecodeToFile(IContext context, String encoded, IMendixObject targetFile)
+	public StringToFile(IContext context, String value, IMendixObject destination)
 	{
 		super(context);
-		this.encoded = encoded;
-		this.__targetFile = targetFile;
+		this.value = value;
+		this.__destination = destination;
 	}
 
 	@Override
 	public Boolean executeAction() throws Exception
 	{
-		this.targetFile = __targetFile == null ? null : system.proxies.FileDocument.initialize(getContext(), __targetFile);
+		this.destination = __destination == null ? null : system.proxies.FileDocument.initialize(getContext(), __destination);
 
 		// BEGIN USER CODE
-		FileHandling.base64DecodeToFile(getContext(), encoded, targetFile);
+		FileHandling.stringToFile(getContext(), value, destination);
 		return true;
 		// END USER CODE
 	}
@@ -49,7 +50,7 @@ public class Base64DecodeToFile extends CustomJavaAction<Boolean>
 	@Override
 	public String toString()
 	{
-		return "Base64DecodeToFile";
+		return "StringToFile";
 	}
 
 	// BEGIN EXTRA CODE

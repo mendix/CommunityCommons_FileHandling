@@ -1,7 +1,7 @@
-# CommunityCommons_FileHandling
+# FileHandling
 A collection of reusable actions concerning 'Files'.
 
-## Community Commons series (CoCo)
+## Community Commons series 
 Community Commons is a series of modules for and by the community extending the low-code capabilities of the Mendix Platform.
 
 ## Contributing

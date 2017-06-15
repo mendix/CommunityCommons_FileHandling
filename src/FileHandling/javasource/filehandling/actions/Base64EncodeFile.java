@@ -7,34 +7,35 @@
 // Other code you write will be lost the next time you deploy the project.
 // Special characters, e.g., é, ö, à, etc. are supported in comments.
 
-package system.actions;
+package filehandling.actions;
 
-import com.mendix.core.Core;
-import com.mendix.systemwideinterfaces.core.IUser;
 import com.mendix.systemwideinterfaces.core.IContext;
+import com.mendix.systemwideinterfaces.core.IMendixObject;
 import com.mendix.webui.CustomJavaAction;
 
-/**
- * Verifies that the specified user name/password combination is valid.
- */
-public class VerifyPassword extends CustomJavaAction<Boolean>
-{
-	private String userName;
-	private String password;
+import filehandling.FileHandling;
 
-	public VerifyPassword(IContext context, String userName, String password)
+/**
+ * Converts an unencoded file to a base 64 encoded string.
+ */
+public class Base64EncodeFile extends CustomJavaAction<String>
+{
+	private IMendixObject __file;
+	private system.proxies.FileDocument file;
+
+	public Base64EncodeFile(IContext context, IMendixObject file)
 	{
 		super(context);
-		this.userName = userName;
-		this.password = password;
+		this.__file = file;
 	}
 
 	@Override
-	public Boolean executeAction() throws Exception
+	public String executeAction() throws Exception
 	{
+		this.file = __file == null ? null : system.proxies.FileDocument.initialize(getContext(), __file);
+
 		// BEGIN USER CODE
-		IUser user = Core.getUser(getContext(), userName);
-		return user != null && Core.authenticate(getContext(), user, password);
+		return FileHandling.base64EncodeFile(getContext(), file);
 		// END USER CODE
 	}
 
@@ -44,7 +45,7 @@ public class VerifyPassword extends CustomJavaAction<Boolean>
 	@Override
 	public String toString()
 	{
-		return "VerifyPassword";
+		return "Base64EncodeFile";
 	}
 
 	// BEGIN EXTRA CODE

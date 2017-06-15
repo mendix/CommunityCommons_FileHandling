@@ -1,4 +1,4 @@
-package coco_filehandling;
+package filehandling;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;

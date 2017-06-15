@@ -7,44 +7,49 @@
 // Other code you write will be lost the next time you deploy the project.
 // Special characters, e.g., é, ö, à, etc. are supported in comments.
 
-package coco_filehandling.actions;
+package filehandling.actions;
 
 import com.mendix.systemwideinterfaces.core.IContext;
 import com.mendix.systemwideinterfaces.core.IMendixObject;
 import com.mendix.webui.CustomJavaAction;
-import coco_filehandling.FileHandling;
+
+import filehandling.FileHandling;
 
 /**
- * Clones the contents of one file document into another. 
+ * Clones the contents of one image document into another, and generates a thumbnail as well. 
  * - fileToClone : the source file
  * - cloneTarget : an initialized file document, in which the file will be stored.
  * 
  * Returns true if copied, returns file if the source had no contents, throws exception in any other case.
  * Pre condition: HasContents of the 'fileToClone' need to be set to true, otherwise the action will not copy anything.
  */
-public class DuplicateFileDocument extends CustomJavaAction<Boolean>
+public class DuplicateImageDocument extends CustomJavaAction<Boolean>
 {
 	private IMendixObject __fileToClone;
-	private system.proxies.FileDocument fileToClone;
+	private system.proxies.Image fileToClone;
 	private IMendixObject __cloneTarget;
-	private system.proxies.FileDocument cloneTarget;
+	private system.proxies.Image cloneTarget;
+	private Long thumbWidth;
+	private Long thumbHeight;
 
-	public DuplicateFileDocument(IContext context, IMendixObject fileToClone, IMendixObject cloneTarget)
+	public DuplicateImageDocument(IContext context, IMendixObject fileToClone, IMendixObject cloneTarget, Long thumbWidth, Long thumbHeight)
 	{
 		super(context);
 		this.__fileToClone = fileToClone;
 		this.__cloneTarget = cloneTarget;
+		this.thumbWidth = thumbWidth;
+		this.thumbHeight = thumbHeight;
 	}
 
 	@Override
 	public Boolean executeAction() throws Exception
 	{
-		this.fileToClone = __fileToClone == null ? null : system.proxies.FileDocument.initialize(getContext(), __fileToClone);
+		this.fileToClone = __fileToClone == null ? null : system.proxies.Image.initialize(getContext(), __fileToClone);
 
-		this.cloneTarget = __cloneTarget == null ? null : system.proxies.FileDocument.initialize(getContext(), __cloneTarget);
+		this.cloneTarget = __cloneTarget == null ? null : system.proxies.Image.initialize(getContext(), __cloneTarget);
 
 		// BEGIN USER CODE
-		return FileHandling.duplicateFileDocument(this.getContext(), fileToClone.getMendixObject(), cloneTarget.getMendixObject());
+		return FileHandling.duplicateImage(this.getContext(), fileToClone.getMendixObject(), cloneTarget.getMendixObject(), thumbWidth.intValue(), thumbHeight.intValue());
 		// END USER CODE
 	}
 
@@ -54,7 +59,7 @@ public class DuplicateFileDocument extends CustomJavaAction<Boolean>
 	@Override
 	public String toString()
 	{
-		return "DuplicateFileDocument";
+		return "DuplicateImageDocument";
 	}
 
 	// BEGIN EXTRA CODE

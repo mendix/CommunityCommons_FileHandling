@@ -7,15 +7,18 @@
 // Other code you write will be lost the next time you deploy the project.
 // Special characters, e.g., é, ö, à, etc. are supported in comments.
 
-package coco_filehandling.actions;
+package filehandling.actions;
 
 import java.awt.image.BufferedImage;
+
 import javax.imageio.ImageIO;
+
 import com.mendix.core.Core;
 import com.mendix.systemwideinterfaces.core.IContext;
 import com.mendix.systemwideinterfaces.core.IMendixObject;
 import com.mendix.webui.CustomJavaAction;
-import coco_filehandling.proxies.ImageDimensions;
+
+import filehandling.proxies.ImageDimensions;
 
 public class GetImageDimensions extends CustomJavaAction<IMendixObject>
 {
