@@ -19,21 +19,21 @@ import com.mendix.systemwideinterfaces.core.IMendixObject;
 /**
  * Reads a file from the local (server) storage and stores it inside a FileDocument.
  */
-public class FileDocumentFromFile extends CustomJavaAction<Boolean>
+public class FileDocumentFromFile extends CustomJavaAction<java.lang.Boolean>
 {
-	private String file;
+	private java.lang.String file;
 	private IMendixObject __fileDocument;
 	private system.proxies.FileDocument fileDocument;
 
-	public FileDocumentFromFile(IContext context, String file, IMendixObject fileDocument)
+	public FileDocumentFromFile(IContext context, java.lang.String file, IMendixObject fileDocument)
 	{
 		super(context);
 		this.file = file;
 		this.__fileDocument = fileDocument;
 	}
 
-	@Override
-	public Boolean executeAction() throws Exception
+	@java.lang.Override
+	public java.lang.Boolean executeAction() throws Exception
 	{
 		this.fileDocument = __fileDocument == null ? null : system.proxies.FileDocument.initialize(getContext(), __fileDocument);
 
@@ -49,8 +49,8 @@ public class FileDocumentFromFile extends CustomJavaAction<Boolean>
 	/**
 	 * Returns a string representation of this action
 	 */
-	@Override
-	public String toString()
+	@java.lang.Override
+	public java.lang.String toString()
 	{
 		return "FileDocumentFromFile";
 	}

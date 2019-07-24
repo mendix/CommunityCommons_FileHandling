@@ -10,14 +10,11 @@
 package filehandling.actions;
 
 import java.awt.image.BufferedImage;
-
 import javax.imageio.ImageIO;
-
 import com.mendix.core.Core;
 import com.mendix.systemwideinterfaces.core.IContext;
 import com.mendix.systemwideinterfaces.core.IMendixObject;
 import com.mendix.webui.CustomJavaAction;
-
 import filehandling.proxies.ImageDimensions;
 
 public class GetImageDimensions extends CustomJavaAction<IMendixObject>
@@ -31,7 +28,7 @@ public class GetImageDimensions extends CustomJavaAction<IMendixObject>
 		this.__ImageParameter1 = ImageParameter1;
 	}
 
-	@Override
+	@java.lang.Override
 	public IMendixObject executeAction() throws Exception
 	{
 		this.ImageParameter1 = __ImageParameter1 == null ? null : system.proxies.Image.initialize(getContext(), __ImageParameter1);
@@ -48,8 +45,8 @@ public class GetImageDimensions extends CustomJavaAction<IMendixObject>
 	/**
 	 * Returns a string representation of this action
 	 */
-	@Override
-	public String toString()
+	@java.lang.Override
+	public java.lang.String toString()
 	{
 		return "GetImageDimensions";
 	}
