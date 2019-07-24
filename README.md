@@ -22,4 +22,5 @@ For more information on contributing to this repository visit [Contributing to a
 - Image - Get image dimensions
 
 ## Dependencies
-- commons-codec-1.10.jar
+- ~commons-codec-1.10.jar~
+- commons-io-2.6.jar

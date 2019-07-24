@@ -14,15 +14,15 @@ import com.mendix.core.Core;
 import com.mendix.systemwideinterfaces.core.IContext;
 import com.mendix.webui.CustomJavaAction;
 
-public class StartSignOnServlet extends CustomJavaAction<Boolean>
+public class StartSignOnServlet extends CustomJavaAction<java.lang.Boolean>
 {
 	public StartSignOnServlet(IContext context)
 	{
 		super(context);
 	}
 
-	@Override
-	public Boolean executeAction() throws Exception
+	@java.lang.Override
+	public java.lang.Boolean executeAction() throws Exception
 	{
 		// BEGIN USER CODE
 		Core.addRequestHandler(OpenIDHandler.OPENID_CLIENTSERVLET_LOCATION, new OpenIDHandler());
@@ -33,8 +33,8 @@ public class StartSignOnServlet extends CustomJavaAction<Boolean>
 	/**
 	 * Returns a string representation of this action
 	 */
-	@Override
-	public String toString()
+	@java.lang.Override
+	public java.lang.String toString()
 	{
 		return "StartSignOnServlet";
 	}

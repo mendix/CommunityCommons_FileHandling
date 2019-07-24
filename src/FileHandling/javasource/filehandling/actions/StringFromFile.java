@@ -12,7 +12,6 @@ package filehandling.actions;
 import com.mendix.systemwideinterfaces.core.IContext;
 import com.mendix.systemwideinterfaces.core.IMendixObject;
 import com.mendix.webui.CustomJavaAction;
-
 import filehandling.FileHandling;
 
 /**
@@ -20,7 +19,7 @@ import filehandling.FileHandling;
  * 
  * Note that this might give strange results when using with binary files. In that case, use the Base64 functions.
  */
-public class StringFromFile extends CustomJavaAction<String>
+public class StringFromFile extends CustomJavaAction<java.lang.String>
 {
 	private IMendixObject __source;
 	private system.proxies.FileDocument source;
@@ -31,8 +30,8 @@ public class StringFromFile extends CustomJavaAction<String>
 		this.__source = source;
 	}
 
-	@Override
-	public String executeAction() throws Exception
+	@java.lang.Override
+	public java.lang.String executeAction() throws Exception
 	{
 		this.source = __source == null ? null : system.proxies.FileDocument.initialize(getContext(), __source);
 
@@ -44,8 +43,8 @@ public class StringFromFile extends CustomJavaAction<String>
 	/**
 	 * Returns a string representation of this action
 	 */
-	@Override
-	public String toString()
+	@java.lang.Override
+	public java.lang.String toString()
 	{
 		return "StringFromFile";
 	}

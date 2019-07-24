@@ -12,7 +12,6 @@ package filehandling.actions;
 import com.mendix.systemwideinterfaces.core.IContext;
 import com.mendix.systemwideinterfaces.core.IMendixObject;
 import com.mendix.webui.CustomJavaAction;
-
 import filehandling.FileHandling;
 
 /**
@@ -23,7 +22,7 @@ import filehandling.FileHandling;
  * Returns true if copied, returns file if the source had no contents, throws exception in any other case.
  * Pre condition: HasContents of the 'fileToClone' need to be set to true, otherwise the action will not copy anything.
  */
-public class DuplicateFileDocument extends CustomJavaAction<Boolean>
+public class DuplicateFileDocument extends CustomJavaAction<java.lang.Boolean>
 {
 	private IMendixObject __fileToClone;
 	private system.proxies.FileDocument fileToClone;
@@ -37,8 +36,8 @@ public class DuplicateFileDocument extends CustomJavaAction<Boolean>
 		this.__cloneTarget = cloneTarget;
 	}
 
-	@Override
-	public Boolean executeAction() throws Exception
+	@java.lang.Override
+	public java.lang.Boolean executeAction() throws Exception
 	{
 		this.fileToClone = __fileToClone == null ? null : system.proxies.FileDocument.initialize(getContext(), __fileToClone);
 
@@ -52,8 +51,8 @@ public class DuplicateFileDocument extends CustomJavaAction<Boolean>
 	/**
 	 * Returns a string representation of this action
 	 */
-	@Override
-	public String toString()
+	@java.lang.Override
+	public java.lang.String toString()
 	{
 		return "DuplicateFileDocument";
 	}
