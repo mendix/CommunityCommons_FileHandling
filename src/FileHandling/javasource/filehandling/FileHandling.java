@@ -1,16 +1,14 @@
 package filehandling;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Base64;
-
 
 import org.apache.commons.io.IOUtils;
 
@@ -22,6 +20,9 @@ import com.mendix.systemwideinterfaces.core.IMendixObject;
 import system.proxies.FileDocument;
 
 public class FileHandling {
+	
+	private static final String LOGNODE = "FileHandling";
+	
 	public static void base64DecodeToFile(IContext context, String encoded, FileDocument targetFile) throws Exception
 	{
 		if (targetFile == null)
@@ -52,69 +53,49 @@ public class FileHandling {
 		}
 	}
 	
-	public static Boolean duplicateFileDocument(IContext context, IMendixObject toClone, IMendixObject target) throws Exception
-    {
-        if (toClone == null || target == null)
-            throw new Exception("No file to clone or to clone into provided");
+	public static Boolean duplicateFileDocument(IContext context, IMendixObject toClone, IMendixObject target) throws Exception {
+		if (toClone == null || target == null) {
+			throw new Exception("No file to clone or to clone into provided");
+		}
 
-        MendixBoolean hasContents = (MendixBoolean) toClone.getMember(context, FileDocument.MemberNames.HasContents.toString());
-        if (!hasContents.getValue(context))
-        	return false;
+		MendixBoolean hasContents = (MendixBoolean) toClone.getMember(context, FileDocument.MemberNames.HasContents.toString());
+		if (!hasContents.getValue(context)) {
+			return false;
+		}
 
-        InputStream inputStream = Core.getFileDocumentContent(context, toClone); 
+		try (
+			InputStream inputStream = Core.getFileDocumentContent(context, toClone)) {
+			Core.storeFileDocumentContent(context, target, (String) toClone.getValue(context, system.proxies.FileDocument.MemberNames.Name.toString()), inputStream);
+		}
 
-        try {
-            Core.storeFileDocumentContent(context, target, (String) toClone.getValue(context, system.proxies.FileDocument.MemberNames.Name.toString()),  inputStream); 
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        finally{
-            try {
-                if(inputStream != null)
-                inputStream.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        return true;
-    }
+		return true;
+	}
 
-	public static Boolean duplicateImage(IContext context, IMendixObject toClone, IMendixObject target, int thumbWidth, int thumbHeight) throws Exception
-	{
-	      if (toClone == null || target == null)
-	          throw new Exception("No file to clone or to clone into provided");
+	public static Boolean duplicateImage(IContext context, IMendixObject toClone, IMendixObject target, int thumbWidth, int thumbHeight) throws Exception {
+		if (toClone == null || target == null) {
+			throw new Exception("No file to clone or to clone into provided");
+		}
 
-	      MendixBoolean hasContents = (MendixBoolean) toClone.getMember(context, FileDocument.MemberNames.HasContents.toString());
-	      if (!hasContents.getValue(context))
-	          return false;
+		MendixBoolean hasContents = (MendixBoolean) toClone.getMember(context, FileDocument.MemberNames.HasContents.toString());
+		if (!hasContents.getValue(context)) {
+			return false;
+		}
 
-	      InputStream inputStream = Core.getImage(context, toClone, false); 
+		try (
+			InputStream inputStream = Core.getImage(context, toClone, false)) {
+			Core.storeImageDocumentContent(context, target, inputStream, thumbWidth, thumbHeight);
+		}
 
-	      try {
-	        Core.storeImageDocumentContent(context, target, inputStream, thumbWidth, thumbHeight);
+		return true;
+	}
 
-	          return true;
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	    }
-	      finally {
-	          try {
-	            if(inputStream!= null)
-	              inputStream.close();
-	        } catch (Exception e) {
-	            e.printStackTrace();
-	        }
-	      }
-	      return true;
-	  }
 	
 	public static Boolean storeURLToFileDocument(IContext context, String url, IMendixObject __document, String filename) throws IOException {
-        if (__document == null || url == null || filename == null) {
-            throw new IllegalArgumentException("No document, filename or URL provided");
-        }
+		if (__document == null || url == null || filename == null) {
+			throw new IllegalArgumentException("No document, filename or URL provided");
+		}
 
-        final int MAX_REMOTE_FILESIZE = 1024 * 1024 * 200; //maximum of 200 MB
+		final int MAX_REMOTE_FILESIZE = 1024 * 1024 * 200; //maximum of 200 MB
 		try {
 			URL imageUrl = new URL(url);
 			URLConnection connection = imageUrl.openConnection();
@@ -125,8 +106,8 @@ public class FileHandling {
 
 			int contentLength = connection.getContentLength();
 
-			//check on forehand the size of the remote file, we don't want to kill the server by providing a 3 terabyte image.
-			Core.getLogger("FileHandling").trace(String.format("Remote filesize: %d", contentLength));
+			//check on beforehand the size of the remote file, we don't want to kill the server by providing a 3 terabyte image.
+			Core.getLogger(LOGNODE).trace(String.format("Remote filesize: %d", contentLength));
 
 			if (contentLength > MAX_REMOTE_FILESIZE) { //maximum of 200 mb
 				throw new IllegalArgumentException(String.format("Wrong filesize of remote url: %d (max: %d)", contentLength, MAX_REMOTE_FILESIZE));
@@ -137,7 +118,7 @@ public class FileHandling {
 				if (contentLength >= 0) {
 					fileContentIS = connectionInputStream;
 				} else { // contentLength is negative or unknown
-					Core.getLogger("FileHandling").trace(String.format("Unknown content length; limiting to %d", MAX_REMOTE_FILESIZE));
+					Core.getLogger(LOGNODE).trace(String.format("Unknown content length; limiting to %d", MAX_REMOTE_FILESIZE));
 					byte[] outBytes = new byte[MAX_REMOTE_FILESIZE];
 					int actualLength = IOUtils.read(connectionInputStream, outBytes, 0, MAX_REMOTE_FILESIZE);
 					fileContentIS = new ByteArrayInputStream(Arrays.copyOf(outBytes, actualLength));
@@ -145,53 +126,53 @@ public class FileHandling {
 				Core.storeFileDocumentContent(context, __document, filename, fileContentIS);
 			}
 		} catch (IOException ioe) {
-			Core.getLogger("FileHandling").error(String.format("A problem occurred while reading from URL %s: %s", url, ioe.getMessage()));
+			Core.getLogger(LOGNODE).trace(String.format("A problem occurred while reading from URL %s: %s", url, ioe.getMessage()));
 			throw ioe;
 		}
-        
-        return true;
-    }
+
+		return true;
+	}
 
 	public static Long getFileSize(IContext context, IMendixObject document) {
-        final int BUFFER_SIZE = 4096;
-        long size = 0;
-        
-        if (context != null) {
-        	byte[] buffer = new byte[BUFFER_SIZE];
-	      
-        	try ( 
-    			InputStream inputStream = Core.getFileDocumentContent(context, document)
-			) {
-	          int i;
-                  while ((i = inputStream.read(buffer)) != -1) {
-	              size += i;
-                  }
-        	} catch (IOException e) {
-        		Core.getLogger("FileHanding").error(e);
-        	}
-        }
-        return size;
-    }
-	public static String stringFromFile(IContext context, FileDocument source, Charset charset) throws IOException
+		final int BUFFER_SIZE = 4096;
+		long size = 0;
+
+		if (context != null) {
+			byte[] buffer = new byte[BUFFER_SIZE];
+
+			try (
+				InputStream inputStream = Core.getFileDocumentContent(context, document)) {
+				int i;
+				while ((i = inputStream.read(buffer)) != -1) {
+					size += i;
+				}
+			} catch (IOException e) {
+				Core.getLogger(LOGNODE).error("Couldn't determine filesize of FileDocument '" + document.getId());
+			}
+		}
+
+		return size;
+	}
+	
+	public static String stringFromFile(IContext context, FileDocument source) throws IOException
 	{
 		if (source == null)
 			return null;
 		try (
 			InputStream f = Core.getFileDocumentContent(context, source.getMendixObject());
 		) {
-			return IOUtils.toString(f, charset);
+			return IOUtils.toString(f, StandardCharsets.UTF_8);
 		}
 	}
 
-	public static void stringToFile(IContext context, String value, FileDocument destination, Charset charset) throws IOException
-	{
+	public static void stringToFile(IContext context, String value, FileDocument destination) throws IOException	{
 		if (destination == null)
 			throw new IllegalArgumentException("Destination file is null");
 		if (value == null)
 			throw new IllegalArgumentException("Value to write is null");
 
 		try (
-			InputStream is = IOUtils.toInputStream(value, charset)
+			InputStream is = IOUtils.toInputStream(value, StandardCharsets.UTF_8)
 		) {
 			Core.storeFileDocumentContent(context, destination.getMendixObject(), is);
 		}

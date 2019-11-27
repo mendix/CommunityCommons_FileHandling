@@ -32,3 +32,6 @@ src/javasource/system/UserActionsRegistrar.java
 src/FileHandling/javasource/system/UserActionsRegistrar.java
 src/FileHandling/javasource/system/actions/VerifyPassword.java
 src/FileHandling/javasource/com/
+.gradle/
+build/
+src/FileHandling/GPUCache/

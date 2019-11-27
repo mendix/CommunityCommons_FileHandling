@@ -1,0 +1,125 @@
+apply plugin: 'java-library'
+
+sourceCompatibility = '8'
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
+import org.gradle.api.internal.file.copy.CopySpecInternal
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'org.owasp:dependency-check-gradle:5.2.2'
+    }
+}
+
+apply plugin: 'org.owasp.dependencycheck'
+
+project.ext {
+    MXBUILD_VERSION = '7.23.6.53654'
+}
+
+def runtimeLibs = "$buildDir/runtime/bundles"
+def userLibDir = "$projectDir/src/${project.name}/userlib"
+
+configurations {
+    projectDependencies
+    importedDependencies.extendsFrom(testImplementation)
+
+}
+
+repositories {
+    mavenCentral()
+    ivy {
+		url 'https://cdn.mendix.com/'
+		layout 'pattern', {
+			artifact '/[organisation]/[module]-[revision].[ext]'
+		}
+		metadataSources {
+			artifact()
+		}
+    }
+}
+
+dependencies {
+    
+    //File Handling
+    implementation 'commons-io:commons-io:2.6'
+    
+    
+    importedDependencies (group: 'org.apache.httpcomponents',name:'httpclient', version:'4.4.1') { because 'UnitTesting Module' }
+    importedDependencies (group: 'org.apache.httpcomponents',name:'httpcore', version:'4.4.1') { because 'UnitTesting Module' }
+    importedDependencies (group: 'junit',name:'junit', version:'4.11') { because 'UnitTesting Module' }
+    
+    compileOnly fileTree(dir: "$runtimeLibs")
+    
+    projectDependencies "runtime:mxbuild:${project.MXBUILD_VERSION}@tar.gz"
+}
+
+// https://stackoverflow.com/a/48724412/412834
+configurations.each {
+    c -> c.resolutionStrategy.dependencySubstitution {
+        all { DependencySubstitution dependency ->
+            if (dependency.requested.group == 'com.google.guava') {
+                dependency.useTarget 'com.google.guava:guava:27.0-jre'
+            }
+        }
+    }
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ["src/FileHandling/javasource"]
+//            exclude 'unittesting/**'
+//            exclude 'system/UserActionsRegistrar.java'
+        }
+    }
+    //test {
+    //    java {
+    //        srcDirs = ["src/test"]
+    //    }
+    //}
+}
+
+
+task copyToUserlib( type: Copy ) {
+    into userLibDir
+    from configurations.runtimeClasspath
+    eachFile { fileCopyDetails ->
+        def requiredLibFlag = new File( destinationDir, "${fileCopyDetails.name}.${project.name}.RequiredLib")
+        requiredLibFlag.write ''
+    }
+}
+
+task copyImportedDependenciesToUserlib( type: Copy ) {
+    into userLibDir
+    from configurations.importedDependencies
+}
+
+
+task untarMxbuild( type: Copy ) {
+    configurations.projectDependencies.findAll{it.name.endsWith('tar.gz')}.each {
+        from tarTree(resources.gzip(it))
+        into buildDir
+        include('**/runtime/bundles/com.mendix.public-api.jar')
+        include('**/runtime/bundles/com.mendix.logging-api.jar')
+        include('**/runtime/bundles/com.mendix.m2ee-api.jar')
+        include('**/runtime/bundles/com.mendix.json.jar')
+        include('**/runtime/bundles/javax.servlet-api.servlet.jar')
+        include('**/runtime/bundles/org.apache.httpcomponents.httpclient.4.5.5.jar')
+        include('**/runtime/bundles/org.apache.httpcomponents.httpcore.4.4.9.jar')
+        includeEmptyDirs = false
+    }
+}
+
+task prepareDeps {
+    dependsOn 'clean', 'copyToUserlib', 'copyImportedDependenciesToUserlib', 'untarMxbuild'
+}
+
+clean {
+    delete "$projectDir/src/FileHandling/userlib"
+}
+
+tasks.untarMxbuild.shouldRunAfter tasks.copyImportedDependenciesToUserlib
