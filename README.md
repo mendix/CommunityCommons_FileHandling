@@ -38,7 +38,7 @@ gradle prepareDeps
 ``` 
 from the command line. 
 
-Unfortunately, this doesn't mean that obsoleted jars are automatically deleted from your projects' `userlib` folder when you import the Community Commons module into your app model.
+Unfortunately, this doesn't mean that obsoleted jars are automatically deleted from your projects' `userlib` folder when you import the FileHandling module into your app model.
 
 ### Exporting the module
 Only select the files from the userlib directory which have an equivalent file with the `Filehandling.RequiredLib` extension.
