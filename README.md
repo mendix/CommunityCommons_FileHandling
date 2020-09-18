@@ -11,12 +11,13 @@ Community Commons is a series of modules for and by the community extending the 
 - FileDocument - Duplicate contents
 - FileDocument - Get FileDocument contents as string
 - FileDocument - Get FileDocument contents file size (Bytes)
-- FileDocument - Store contents from URL in FileDocument object
 - FileDocument - Store contents from file (located in resources folder)
 - FileDocument - Store local file content in FileDocument object
 - FileDocument - Write string to FileDocument object
 - Image - Duplicate image contents
 - Image - Get image dimensions
+- URL - Store contents from URL in String
+- URL - Store contents from URL in FileDocument object
 
 ## Dependencies
 - ~~commons-codec-1.10.jar~~
