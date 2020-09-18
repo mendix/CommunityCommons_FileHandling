@@ -9,6 +9,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.Scanner;
 
 import org.apache.commons.io.IOUtils;
 
@@ -89,7 +90,6 @@ public class FileHandling {
 		return true;
 	}
 
-	
 	public static Boolean storeURLToFileDocument(IContext context, String url, IMendixObject __document, String filename) throws IOException {
 		if (__document == null || url == null || filename == null) {
 			throw new IllegalArgumentException("No document, filename or URL provided");
@@ -154,6 +154,16 @@ public class FileHandling {
 		return size;
 	}
 	
+	public static String readStringFromURL(String requestURL) throws IOException
+	{
+	    try (Scanner scanner = new Scanner(new URL(requestURL).openStream(),
+	            StandardCharsets.UTF_8.toString()))
+	    {
+	        scanner.useDelimiter("\\A");
+	        return scanner.hasNext() ? scanner.next() : "";
+	    }
+	}
+		
 	public static String stringFromFile(IContext context, FileDocument source) throws IOException
 	{
 		if (source == null)
